@@ -1,0 +1,3 @@
+- insert:
+    - id: pemphigus-main
+      name: "@xyb-community/pemphigus-workbench"

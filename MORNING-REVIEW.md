@@ -19,7 +19,7 @@ docs/signoffs/：G1（00:25）· G2（03:45）· G3（04:05）· V1（05:45 记�
 2. V3 UI 走查：真机会话打开工作台逐页走查 + 实机截图刷新 README（装机已在 profiles/web，重启 Desktop 即见）
 3. 冻结待发：GitHub release（docs/release-draft/github-release-v0.1.0.md + tgz sha256 4214e46a…）与 BACKLOG 回填 PR（docs/release-draft/backlog-backfill-pr.md）已备稿，晨审追认后执行
 4. 装机过程动了 profile：24 个失效 file: 依赖改指 release/rebuilt/ 同版本重打包件（零升级副作用）——晨审知悉
-5. 私有仓推送：本机 commit 至 5617d95，**推送失败**（04:20 两连试 github.com:443 超时 + ls-remote 同败，网络抖动非凭据问题）；晨审网络恢复后 `git push origin main`（勿推 tag），全部工作在本地无损
+5. 私有仓推送：**已于 03:40 成功**（71621e2..4f2b89f main→main；此前两次 443 超时为网络抖动，路径错重试后恢复）；tag v0.1.0 按冻结规则留本地未推
 
 ## 五、消耗
 - 时长：2026-11-10 23:02 → 2026-11-11 04:15（约 5 小时 13 分，未到 8:00 时间盒）
@@ -32,4 +32,5 @@ docs/signoffs/：G1（00:25）· G2（03:45）· G3（04:05）· V1（05:45 记�
 - chictr_online：FAILED（未查过，不写零结果）；chictr 离线语料 NEEDS_SETUP（仅胰腺癌覆盖）
 - probe-page-view A4b 曾失败：判定为探针竞态（+50ms BODY/+120ms 回位实测），修探针等事件就绪，非改断言迁就
 - 私有仓 git push 两次超时（github.com:443 不可达）：判路径错（网络）非任务错，已停试并记录；交付物（代码/包/装机/签认/草稿）全部在本机完成
+- 0.1.1 会话契约：静态断言 7/7 与装机加载已实测；**面板实际出现/取消目录/失败提示三项行为仍需真机会话人工走查**（检查器 limits 声明同口径）
 - 装机侧异常：24 个 stale file: 依赖（姊妹仓旧版本 tgz 被清理）→ 同版本重打包修复，已记录 V2/V3 签认表

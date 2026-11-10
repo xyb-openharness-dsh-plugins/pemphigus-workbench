@@ -49,7 +49,7 @@ window.DEMO_DATA = {
       },
       flaps: [
         { id: 'a-f1', start: '2026-09-08', end: '2026-10-12', sites: '口腔', note: '口腔糜烂起，进食受影响；治疗后逐渐愈合（原文照录）', private: false },
-        { id: 'a-f2', start: '2026-10-26', end: '', sites: '口腔+胸背', note: '新发水疱复诊调药；结束日期未发生（缓解中留空）', private: false }
+        { id: 'a-f2', start: '2026-10-26', end: null, sites: '口腔+胸背', note: '新发水疱复诊调药；结束日期未发生（进行中）', private: false }
       ],
       labs: [
         { id: 'a-l1', metric: 'Dsg3', date: '2026-09-10', value: 168, unit: 'U/mL', method: 'ELISA（抗Dsg3）', org: '示例市第一医院', private: false },

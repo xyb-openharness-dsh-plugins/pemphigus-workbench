@@ -1,3 +1,6 @@
 - insert:
     - id: pemphigus-main
       name: "@xyb-community/pemphigus-workbench"
+      # 接线前置：宿主把业务资料根目录指向 dshHomePath('pemphigus')
+      config:
+        root: !!js dshHomePath('pemphigus')

@@ -1,6 +1,6 @@
 {
   "name": "@xyb-community/pemphigus-workbench",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "本机优先的天疱疮抗体指数档案、发作—缓解记录、糖皮质激素减量登记与随访、跨次就诊资料准备工作台",
   "private": true,
   "type": "module",

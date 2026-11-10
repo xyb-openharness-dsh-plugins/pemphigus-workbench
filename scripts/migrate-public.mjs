@@ -55,18 +55,18 @@ const BOOT_BLOCK = `
     if (!b || !Array.isArray(b.profiles) || !b.profiles.length || b.TODAY == null) throw new Error('bootstrap 形状不符')
     window.DEMO_DATA.TODAY = b.TODAY
     window.DEMO_DATA.profiles = b.profiles
-    var app = window.__PERI_APP__
+    var app = window.__PEM_APP__
     if (app && app.render) {
       app.state.profileId = b.profiles[0].id
       app.state.page = 'dash'
       app.state.sub = {}
       app.state.range = 'all'
-      app.state.picked = { CRP: true, ESR: true, WBC: false, cTnI: false, 'NT-proBNP': false, ALT: false, Cr: false, '体温': false }
+      app.state.picked = { Dsg1: true, Dsg3: true, Eos: false, GLU: false, SBP: false, ALT: false, Cr: false, '体重': false }
       app.state.showEpisodes = true
       app.state.flipped = {}
       app.render()
     }
-    window.__PERI_API_BASE__ = apiBase
+    window.__PEM_API_BASE__ = apiBase
     console.info('[pemphigus] 已切换到本机数据库数据（' + b.profiles.length + ' 个档案）')
   }).catch(function (e) {
     console.warn('[pemphigus] bootstrap 不可用，继续使用演示数据：', String(e && e.message || e))

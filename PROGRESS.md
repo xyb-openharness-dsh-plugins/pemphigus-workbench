@@ -1,6 +1,7 @@
 # PROGRESS · 小愈宝 HealPal 天疱疮工作台
 
 - 当前里程碑：**M0–M9 全链完成 + 0.1.1 会话契约整改**（2026-11-10 23:00 → 2026-11-11 03:35；判完成看本行与尾部，不看头部模板行）
+- 0.1.2（资料目录真机状态）：设置页去示意桩——开发版/装机形态 GET /api/store 读真实目录；激活即建「原件/派生」默认树 + store-layout.json（真机 harness/pemphigus/ 已见四件）；更改位置 POST /api/store/choose 过口径（拒主目录/桌面/下载根/tmp 子树）后建树，重启生效，取消/拒绝零副作用；修 BOOT_BLOCK 移植残留（__PERI_APP__/picked，宿主形态 bootstrap 原本静默失效）；8 项新测试 + 真路由冒烟；42/42 单测 + check 0✗ + 双 audit 44/44；tgz 0.1.2 装机 + 重启加载验证 ✓
 - 0.1.1（AI 对话会话契约）：契约检查器同步 starter 最新版（143→157 行），**七项静态断言 7/7 过**；rebuild lib/client.js 同步；VERSION/package.json/lib/version.js 三处 0.1.1；check 0✗ + 单测 34/34 + 双 audit 44/44；tgz 0.1.1 重打包并装机（profiles/web 登记核对一致）+ 重启 Desktop 后宿主加载验证 ✓（启动 19:27:22Z 晚于装机 19:26:17Z）
 - 已完成：
   - 认领 Issue #70（/claim + claimed 标签 + 指派）；私有仓 + init

@@ -100,6 +100,26 @@ export function createHandler({ apiBase = '', publicDir, services }) {
         return sendJson(res, 500, { error: 'bootstrap failed', detail: String(error.message || error) });
       }
     }
+    if (pathname === apiPrefix + '/store') {
+      if (req.method !== 'GET') return sendJson(res, 405, { error: 'Method not allowed' });
+      try { return sendJson(res, 200, services.storeInfo()); }
+      catch (error) { return sendJson(res, 500, { error: 'store info failed', detail: String(error.message || error) }); }
+    }
+    if (pathname === apiPrefix + '/store/choose') {
+      if (req.method !== 'POST') return sendJson(res, 405, { error: 'Method not allowed' });
+      let body = '';
+      req.on('data', (c) => { body += c; if (body.length > 4096) req.destroy(); });
+      req.on('end', () => {
+        try {
+          const parsed = JSON.parse(body || '{}');
+          const result = services.chooseStoreRoot(parsed.path);
+          return sendJson(res, result.ok ? 200 : 400, result);
+        } catch (error) {
+          return sendJson(res, 400, { ok: false, reason: `请求不可解析：${String(error.message || error)}` });
+        }
+      });
+      return;
+    }
     if (pathname === apiPrefix + '/trials' && services.trialMatch) {
       if (req.method !== 'GET') return sendJson(res, 405, { error: 'Method not allowed' });
       try {

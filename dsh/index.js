@@ -43,9 +43,11 @@ export const API_BASE_HOSTED = `/api/${API_PREFIX}`
 export function createHostHandler(ctx, workbench) {
   const services = {
     version, displayVersion,
-    capabilities: ['bootstrap', 'health'],
+    capabilities: ['bootstrap', 'health', 'store'],
     bootstrap: () => workbench.bootstrap(),
     trialMatch: (keyword) => workbench.trialMatch(keyword),
+    storeInfo: () => workbench.storeInfo(),
+    chooseStoreRoot: (path) => workbench.chooseStoreRoot(path),
   }
   const inner = createHandler({ apiBase: API_BASE_HOSTED, publicDir: PUBLIC_DIR, services })
   return (req, res) => {

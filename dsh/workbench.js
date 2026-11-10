@@ -11,6 +11,7 @@ import { DatabaseSync } from 'node:sqlite';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 import { openStore, closeStore, migrate } from './store.js';
+import { StoreLayout } from './store-layout.js';
 import { seedDemoData, hasDemoData } from './demo.js';
 import { readBootstrap } from './readmodels.js';
 import { DB_FILE, HOME_DIR } from '../lib/identity.js';
@@ -36,6 +37,14 @@ export class Workbench {
     this.db = openStore(this.dbFile);
     this.migrations = migrate(this.db);
     this.seeded = this.seedDemo ? seedDemoData(this.db) : { skipped: true, profiles: 0 };
+    /* 资料目录真机状态：激活即建默认树（原件区/派生区）；失败不阻断开库，记到 layoutError */
+    try {
+      this.layout = new StoreLayout(this.root);
+      this.storeState = this.layout.ensure();
+    } catch (e) {
+      this.layout = null;
+      this.storeState = { ready: false, root: this.root, error: String(e.message || e) };
+    }
     return this;
   }
 
@@ -115,6 +124,17 @@ export class Workbench {
     }));
     rdb.close();
     return { available: true, snapshotDate: out[0]?.snapshotDate ?? null, total: out.length, records: out };
+  }
+
+  /** 资料目录真机状态（settings 页渲染用）。 */
+  storeInfo() { return this.storeState || { ready: false, root: this.root }; }
+
+  /** 更改资料目录：口径校验 → 建树 → 覆盖记录；拒绝/失败零副作用。 */
+  chooseStoreRoot(path) {
+    if (!this.layout) return { ok: false, reason: this.storeState?.error || '目录服务不可用' };
+    const result = this.layout.choose(path);
+    if (result.ok) this.storeState = result.state;
+    return result;
   }
 }
 

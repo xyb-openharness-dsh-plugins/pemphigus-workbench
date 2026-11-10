@@ -711,13 +711,58 @@
       (t === 'workspace' ? setWorkspace() : t === 'mineru' ? setMineru() : setClinical()) + '</div>' +
       '<div class="actions" style="margin-top:10px"><button class="primary" data-action="dialog-close">完成</button></div>'
     openDialog('设置', body)
+    if (window.__PEM_API_BASE__ != null && (t === 'workspace')) loadStoreReal()
+  }
+  /* 资料目录真机态：serve/宿主形态（__PEM_API_BASE__ 已由 boot 块在 bootstrap 成功后设置）
+     走 /api/store 读真实目录树；file:// 原型无后端，保持「示意」并如实标注（不冒充真机）。 */
+  function storeChooseForm() {
+    return '<section class="card" id="form-store"><h3>更改资料目录</h3>' +
+      '<div class="form-grid">' +
+      '<label class="full">新目录（绝对路径；不存在会自动创建）<input type="text" data-draft="store.path" placeholder="/Volumes/资料/天疱疮" maxlength="200"></label>' +
+      '</div><p class="err-msg" id="store-err" role="alert"></p>' +
+      '<div class="actions"><button class="primary" data-action="store-choose">校验并创建</button><button data-action="cancel-form" data-form="store">取消</button></div>' +
+      '<p class="small-note">口径：拒绝主目录、桌面、下载根目录、tmp；通过后创建「原件/派生」子目录并记录，重启后生效。取消不产生任何副作用。</p></section>'
+  }
+  function storeRealHtml(st) {
+    var dirs = (st.dirs || []).map(function (d) {
+      return '<div class="card"><b>' + esc(d.label) + '</b><p class="small-note">' + esc(d.path) + '</p><p class="small-note">' + esc(d.fileCount) + ' 个文件 · ' + esc(d.note || '') + '</p></div>'
+    }).join('')
+    return '<section class="card" id="store-real"><h3>业务资料目录（真机状态）</h3>' +
+      '<p>资料目录：<code>' + esc(st.storeRoot || st.root) + '</code>' + (st.isOverride ? ' <span class="pill">已更改（重启后数据库与引用切换）</span>' : '') + '</p>' +
+      (st.overrideNote ? '<p class="notice warn">' + esc(st.overrideNote) + '</p>' : '') +
+      '<p class="small-note">数据根（宿主管理）：<code>' + esc(st.root) + '</code> · 数据库：<code>' + esc(st.dbFile || '') + '</code></p>' +
+      '<div class="grid three">' + dirs + '<div class="card"><b>数据库</b><p class="small-note">' + esc(st.dbFile || '') + '</p></div></div>' +
+      '<p class="notice plain">' + esc(st.policy || '拒绝主目录、桌面、下载根目录、tmp') + '</p>' +
+      '<h3 style="margin-top:14px">备份与恢复</h3><p class="small-note">SQLite 用 backup/VACUUM INTO 做一致性快照；本页只显示状态，备份入口按 02 号契约提供。</p>' +
+      storeChooseForm() + '</section>'
+  }
+  function loadStoreReal() {
+    var apiBase = window.__PEM_API_BASE__
+    var host = document.getElementById('store-real')
+    if (!host || typeof apiBase !== 'string') return
+    fetch(apiBase + '/api/store', { credentials: 'same-origin' }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status)
+      return r.json()
+    }).then(function (st) {
+      var box = document.getElementById('store-real')
+      if (box) box.outerHTML = storeRealHtml(st)
+    }).catch(function (e) {
+      var box = document.getElementById('store-real')
+      if (box) box.querySelector('.small-note').textContent = '目录状态读取失败：' + (e && e.message || e) + '（可重开设置重试）'
+    })
   }
   function setWorkspace() {
-    return '<section class="card"><h3>业务资料根目录</h3><p>当前（示意值）：<code>DSH 资料目录 / pemphigus</code></p>' +
-      '<button class="soft" data-action="open-store">更改位置…</button>' +
-      '<p class="notice warn">口径：拒绝主目录、桌面、下载根目录、tmp 作为资料目录；源码目录不是资料目录。</p>' +
-      '<div class="grid three"><div class="card"><b>原件区</b><p class="small-note">0 个文件 · 示意</p></div><div class="card"><b>派生区</b><p class="small-note">0 个文件 · 示意</p></div><div class="card"><b>数据库</b><p class="small-note">未创建 · 示意</p></div></div>' +
-      '<h3 style="margin-top:14px">备份与恢复</h3><p class="small-note">本原型未接入备份；开发版按 02 号契约提供。</p></section>'
+    var apiBase = window.__PEM_API_BASE__
+    if (typeof apiBase !== 'string') {
+      return '<section class="card"><h3>业务资料根目录</h3><p>当前（示意值）：<code>DSH 资料目录 / pemphigus</code></p>' +
+        '<p class="notice warn">本态为原型示意：目录未挂载（file:// 无后端）。开发版/装机形态下这里显示真实目录并可更改位置。</p>' +
+        '<p class="notice warn">口径：拒绝主目录、桌面、下载根目录、tmp 作为资料目录。</p>' +
+        '<div class="grid three"><div class="card"><b>原件区</b><p class="small-note">示意（未挂载）</p></div><div class="card"><b>派生区</b><p class="small-note">示意（未挂载）</p></div><div class="card"><b>数据库</b><p class="small-note">示意（未挂载）</p></div></div>' +
+        '<h3 style="margin-top:14px">备份与恢复</h3><p class="small-note">本原型未接入备份；开发版按 02 号契约提供。</p></section>'
+    }
+    return '<section class="card" id="store-real"><h3>业务资料目录（真机状态）</h3>' +
+      '<p class="small-note">正在读取本机目录状态…</p>' +
+      storeChooseForm() + '</section>'
   }
   function setMineru() {
     return '<section class="card"><h3>文档解析（MinerU）</h3>' +
@@ -1113,6 +1158,30 @@
       saveSaved(loadSaved().filter(function (x) { return x.key !== btn.getAttribute('data-id') })); render()
     }
     else if (act === 'open-store') { openDialog('资料目录', '<p>开发版中选择本机目录；口径：拒绝主目录、桌面、下载根目录、tmp。</p><p>本原型为示意，目录未真实挂载。</p>') }
+    else if (act === 'store-choose') {
+      var apiBase2 = window.__PEM_API_BASE__
+      var pathInput = (state.draft.store || {}).path || ''
+      var errBox = document.getElementById('store-err')
+      if (typeof apiBase2 !== 'string') { if (errBox) errBox.textContent = '本态未接后端（file:// 原型为示意），无法更改目录。'; return }
+      if (!pathInput.trim()) { if (errBox) errBox.textContent = '路径为空：请填写或选择一个目录'; return }
+      if (errBox) errBox.textContent = ''
+      fetch(apiBase2 + '/api/store/choose', {
+        method: 'POST', headers: { 'content-type': 'application/json' }, credentials: 'same-origin',
+        body: JSON.stringify({ path: pathInput })
+      }).then(function (r) { return r.json().then(function (j) { return { status: r.status, body: j } }) }).then(function (res) {
+        if (res.status === 200 && res.body.ok) {
+          delete state.draft.store
+          document.getElementById('store-real').outerHTML = storeRealHtml(res.body.state)
+          toast(res.body.note || '资料目录已创建；重启后生效')
+        } else {
+          var eb = document.getElementById('store-err')
+          if (eb) eb.textContent = res.body.reason || ('更改失败（HTTP ' + res.status + '）')
+        }
+      }).catch(function (e) {
+        var eb = document.getElementById('store-err')
+        if (eb) eb.textContent = '请求失败：' + (e && e.message || e)
+      })
+    }
     else if (act === 'about') { openDialog('原型操作说明', '<p>全部数据为合成示例（两套档案，侧栏可切换）。</p><p>顶部「?」打开整页疾病概要；每页「和 AI 讨论」只填草稿不发送。</p><p>私密记录不进看板摘要、导出与 AI 上下文。</p>') }
     else if (act === 'dialog-close') { $('#dialog').close() }
     else if (act === 'agent-toggle') { setAgent(!state.agentOpen) }
@@ -1391,18 +1460,18 @@ const ROUTES = {
     if (!b || !Array.isArray(b.profiles) || !b.profiles.length || b.TODAY == null) throw new Error('bootstrap 形状不符')
     window.DEMO_DATA.TODAY = b.TODAY
     window.DEMO_DATA.profiles = b.profiles
-    var app = window.__PERI_APP__
+    var app = window.__PEM_APP__
     if (app && app.render) {
       app.state.profileId = b.profiles[0].id
       app.state.page = 'dash'
       app.state.sub = {}
       app.state.range = 'all'
-      app.state.picked = { CRP: true, ESR: true, WBC: false, cTnI: false, 'NT-proBNP': false, ALT: false, Cr: false, '体温': false }
+      app.state.picked = { Dsg1: true, Dsg3: true, Eos: false, GLU: false, SBP: false, ALT: false, Cr: false, '体重': false }
       app.state.showEpisodes = true
       app.state.flipped = {}
       app.render()
     }
-    window.__PERI_API_BASE__ = apiBase
+    window.__PEM_API_BASE__ = apiBase
     console.info('[pemphigus] 已切换到本机数据库数据（' + b.profiles.length + ' 个档案）')
   }).catch(function (e) {
     console.warn('[pemphigus] bootstrap 不可用，继续使用演示数据：', String(e && e.message || e))

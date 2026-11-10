@@ -1,44 +1,54 @@
-# 小愈宝 HealPal 天疱疮工作台
+# 小愈宝 HealPal · 天疱疮工作台（v0.2 原型）
 
-本机优先的天疱疮抗体指数档案、发作—缓解记录、糖皮质激素减量登记与随访、跨次就诊资料准备工作台
+> 状态：**HTML 交互原型 v0.2 已完成**（全部合成示例，未接入宿主）。认领 [Issue #70](https://github.com/xyb-openharness-dsh-plugins/.github/issues/70) · R2 非肿瘤慢性病型 · 结构移植自家族同形仓并全量重写病种语义。0 患者访谈、0 临床审核如实标注；解释层不生成判断层结论。
 
-这是接入骨架，尚未实现真实业务。初始化后先将 [项目设计提示词](docs/DESIGN-PROMPT.md) 交给当前Agent；它应展示实际路径并以已有用户/场景/流程素材对齐设计者、研究与取舍原则。癌种项目另有 [完整专用提示词](prompts/NEW-CANCER-WORKBENCH.md)。需求见 [BRIEF](docs/BRIEF.md)，规格见 [SPEC](docs/SPEC.md)，任务见 [TASKS](docs/TASKS.md)；先读 [AGENTS](AGENTS.md)。CLI输出交接与首问，实际对话由Agent接续。
+## 疾病概要
 
-## 开发顺序
+顶栏「?」或首页「疾病概要：天疱疮是什么？」打开整页四段概要（定义 → 医学资料规范和指南情况 → 治疗全景 → 发展趋势）。医学边界来自《86 个罕见病病种诊疗指南（2025 年版）》第 58 条天疱疮（[官方全文 PDF](https://www.gov.cn/zhengce/zhengceku/202507/P020250710595668350272.pdf)，目录页 346–349，本仓已实测下载核验：15,611,195 字节 / 517 页 / application/pdf）。概要只做解释层整理，每段带来源行；治疗段只列方向不列方案，利妥昔单抗在中国属超说明书用药以药监局为准。
 
-先共创SPEC和候选数据关系，再交付HTML交互工作台；由用户确认对应版本/模块后，复核SCHEMA/API并实现生产功能。确认记录见docs/PROTOTYPE-REVIEW.md；模型不依赖前端Tab/流程。模板骨架不是业务已确认。
+## 关键功能（截图墙）
 
-## 当前能力
+**看板：状态卡由发作记录算出 + 医生行动计划原话 + 抗 Dsg3 缩略走势**
+![看板](docs/screenshots/v0.2-01-dash-a.png)
 
-- 一个 DSH 工作台注册、认证的健康接口、版本展示与标准/大字切换。
-- 已明确选择布局：business-first。business-first 使用 customFrame；模板不创建会话或复制聊天。需要 AI 协助时按官方合同接入原生 conversation 和会话管理。
-- 无业务数据库、无演示患者、无真实密钥；所有业务页按确认 spec 逐项实现。
+**指标卡 3D 翻面（正面）：分类分组、最近值/较上次/来源**
+![指标卡正面](docs/screenshots/v0.2-02-metric-cards-front.png)
 
-## 开发与本地验收
+**指标卡背面：固定高度翻面看走势，不改栅格**
+![指标卡翻面](docs/screenshots/v0.2-03-metric-card-flipped.png)
 
-需要 Node.js 22+、Git、包管理器和可用 DSH Desktop；采用 SQLite 时另核验 node:sqlite 版本条件。宿主 peers 的范围仅是模板基线，请与目标 Desktop 实际依赖核对。
+**一图秀：每条线按该指标全期归一化、单点不连线、发作带可关**
+![一图秀](docs/screenshots/v0.2-04-one-chart.png)
 
-```bash
-npm install
-npm run check
-npm run pack:check
-npm pack
-```
+**发作—缓解区间带：色带=发作区间，◆=剂量调整/输注按次登记**
+![发作区间带](docs/screenshots/v0.2-05-flare-timeline.png)
 
-`npm run check` 只保证"能装"（语法 + 装包合同），第一天就该是绿的。`npm run audit` 管"还是不是家族里的一员"：版本三处一致、`lib/layout.js` 面板参数单一来源、检查链完整、文档与密钥卫生，**只看代码与文件，不看文档自述**。新项目刚生成时 audit 必然有 fail，那是待办清单；交付/发布前必须清零，存在 fail 不得发布（`npm run release:check` 一次跑完两者）。
+**疾病概要整页（? 按钮）：四段 + 来源行四态**
+![疾病概要](docs/screenshots/v0.2-06-disease-primer.png)
 
-跑的时间点：**每次改完**跑 `check`；**G2 原型确认后、写业务代码前**先跑一次 `audit`（这时缺的多是 `lib/layout.js`、`VERSION` 这类结构，越早补越便宜）；**交付/装机前**必须跑 `release:check`；**发布或投稿前**把 `npm run audit --json` 的 `xx/xx 通过 · N 失败 · M 待人工` 抄进 `docs/RELEASE.md` 的「家族一致性」一行。`✗` 是结构缺口（补齐，或在 `docs/DEV-REQUIREMENTS-<日期>.md` 写明偏离理由并由用户确认），`!` 是需人工判断的项（逐条给「已人工确认 / 确实没有」）。
+**试验证据链折叠（收起态）**
+![折叠收起](docs/screenshots/v0.2-07-fold-closed.png)
 
-`npm install` 可能按 npm 策略解析 peer；勿为消警告重复打包宿主 runtime。客户端本身是单文件；引入 TS/组件库后需添加构建步骤并保留单文件导出。
+**试验证据链折叠（展开态）**
+![折叠展开](docs/screenshots/v0.2-08-fold-open.png)
 
-本地安装入口以当前 Desktop/CLI 帮助为准。安装后按 [docs/06-VALIDATION-AND-RELEASE.md](docs/06-VALIDATION-AND-RELEASE.md) 与官方自测完成真实 UI 验收，并填写 [docs/ACCEPTANCE.md](docs/ACCEPTANCE.md)。静态检查不代表已加载。
+## 怎么用
 
-Logo 来源与使用限制见 assets/README.md。许可证、作者、仓库/发布策略由本项目维护者确认后填写；模板默认为 private/UNLICENSED。
+1. 直接双击打开 `prototypes/v0.2/index.html`（file:// 可用），或本机起静态服务访问。
+2. 左上角切换「示例档案 A（刚确诊·记录少）/ B（两年随访·发作多次）」——切换后整页数据、图表、状态卡联动，不串档。
+3. 每个可写页一个「＋ 添加记录」入口；更正=新增版本；私密标记的三出口（看板摘要/导出/AI 上下文）共用同一过滤。
+4. 顶栏「AI 对话（演示）」为未接入演示态；每页「和 AI 讨论」只填草稿不发送。
 
-感谢小x宝社区、DataElement 社区，以及 sam / hhx / 繁华的 ❤️ 贡献。
+## 数据与口径
 
-初始化来源记录见 `.dsh-wb-starter.json`。更新社区脚手架不会覆盖本项目；需要升级时先用相同确认配置在临时目录生成，再审阅差异。CLI 用法见 [docs/CLI-GIT.md](docs/CLI-GIT.md)。
+- 演示数据唯一源：`prototypes/v0.2/demo-data.js`（两套合成档案；页面不写死业务数字）。
+- 化验按「方法+机构」可比组展示，不同方法不合并、不做差；抗 Dsg1/3 ELISA 指数是活动相关化验，本台只回顾不解读。
+- 状态卡数字（缓解第 N 天 / 距上次发作 / 近 90 天发作次数）由发作记录读时派生，不落库、不判读；私密发作不进聚合并在页内标注。
+- 无判读列；无病期/线序/疗效/预后表达（非肿瘤发作—缓解语义）。
 
-## HTML先行与数据演进
+## 开发
 
-业务开发前先交付HTML交互工作台原型、实际预览并由用户确认版本/hash和范围。数据设计先区分领域事实、流程状态和页面读模型，走查前端/流程变化、兼容与迁移；原型对象不直接作为表。见[规范](docs/14-HTML-AND-DATA-CONTRACT.md)。
+- `npm run check`：静态合同 + 探针覆盖 + 版本字面量 + 底本残留 + 断言强度 + primer 链接断言。
+- `npm test`：包合同单测。
+- 探针（需本机 Chrome，`--url` 显式指向本仓原型）：`node scripts/probe-disease-primer.mjs --url http://127.0.0.1:<port>/prototypes/v0.2/index.html`（P1–P9）、`scripts/probe-page-view.mjs`（A1–A10）、`scripts/probe-pemphigus-m2.mjs`（IP/C/MT/Q/CLIN 全量 36 项）。
+- 家族规范与里程碑见 `docs/`；PROGRESS 见根目录 `PROGRESS.md`。

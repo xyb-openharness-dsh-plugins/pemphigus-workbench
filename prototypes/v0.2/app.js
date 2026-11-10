@@ -209,16 +209,16 @@
       taskEntry('🧪', '看化验趋势', '按方法分组，不合并', 'labs') +
       taskEntry('💊', '登记剂量与输注', '剂量调整、输注逐条记', 'treatment') +
       '</div>'
-    var crpRows = sharedOnly(p.labs).filter(function (l) { return l.metric === 'Dsg3' }).sort(function (a, b) { return a.date < b.date ? -1 : 1 })
+    var dsgRows = sharedOnly(p.labs).filter(function (l) { return l.metric === 'Dsg3' }).sort(function (a, b) { return a.date < b.date ? -1 : 1 })
     var mini = ''
-    if (crpRows.length) {
-      var vals = crpRows.map(function (l) { return l.value })
+    if (dsgRows.length) {
+      var vals = dsgRows.map(function (l) { return l.value })
       var mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals)
-      var pts = crpRows.map(function (l, i) {
-        var x = 10 + i * (180 / Math.max(1, crpRows.length - 1))
+      var pts = dsgRows.map(function (l, i) {
+        var x = 10 + i * (180 / Math.max(1, dsgRows.length - 1))
         var y = 50 - (mx === mn ? 20 : (l.value - mn) / (mx - mn) * 40)
-        var lastOne = i === crpRows.length - 1
-        return (i ? '<line x1="' + (10 + (i - 1) * (180 / Math.max(1, crpRows.length - 1))) + '" y1="' + y + '" x2="' + x + '" y2="' + y + '" stroke="#2f6f8f" stroke-width="2"/>' : '') +
+        var lastOne = i === dsgRows.length - 1
+        return (i ? '<line x1="' + (10 + (i - 1) * (180 / Math.max(1, dsgRows.length - 1))) + '" y1="' + y + '" x2="' + x + '" y2="' + y + '" stroke="#2f6f8f" stroke-width="2"/>' : '') +
           (lastOne ? '<circle cx="' + x + '" cy="' + y + '" r="6" fill="#2f6f8f"><title>Dsg3 ' + esc(l.value) + ' ' + esc(l.unit) + ' · ' + esc(l.date) + '</title></circle>' : '<circle cx="' + x + '" cy="' + y + '" r="2.5" fill="#2f6f8f"/>')
       }).join('')
       mini = '<section class="card mini-chart"><div class="card-head"><h3>抗 Dsg3 抗体最近走势（缩略）</h3><span class="pill">点末点看详情</span></div><button class="mini-pt" data-open="chart" data-metric="Dsg3" aria-label="看抗 Dsg3 抗体最近一次数据点详情"><svg viewBox="0 0 200 60" role="img" aria-label="抗 Dsg3 抗体缩略走势，末点可点开数据点详情">' + pts + '</svg></button><p class="small-note">仅回顾，不解读；完整趋势见一图秀。<button class="linkish" data-open="labs">化验速览（整页层）</button></p></section>'

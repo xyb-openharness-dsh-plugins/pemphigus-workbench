@@ -25,8 +25,8 @@ window.DEMO_DATA = {
     { key: 'safety', title: '用药安全监测（基线与随访）', items: ['ALT', 'Cr'] },
     { key: 'vitals', title: '体征', items: ['体重'] }
   ],
-  /* M4 快照元信息（与 research/pemphigus/manifest.json 一致；clinical 页与设置 tab 同口径；M4 生成后更新） */
-  snapshotMeta: { count: 0, date: null, note: '快照未生成（M4 完成后更新本值）' },
+  /* M4 快照元信息（与 research/pemphigus/manifest.json 一致；clinical 页与设置 tab 同口径；2026-11-11 实抓 223 条） */
+  snapshotMeta: { count: 223, date: '2026-11-11' },
   /* 临床登记浏览的内置示例：虚构条目，不是真实研究，不含可用登记号（35 号 E2 口径） */
   trialsDemo: [
     { recordId: 'demo-t1', registryNumbers: [{ registry: 'NCT', value: 'NCT-DEMO-001' }], title: '（虚构示例）利妥昔单抗联合糖皮质激素在寻常型天疱疮中的前瞻登记', studyType: '介入性', source: '快照摘录', statusNote: '登记状态，未核实' },

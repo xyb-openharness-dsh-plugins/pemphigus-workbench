@@ -733,8 +733,8 @@
     return '<section class="card"><h3>临床数据库</h3>' +
       '<p>快照状态：<b>' + (snap.count ? snap.count + ' 条 · ' + esc(snap.date) : '本台未生成快照（0 条）') + '</b>；「临床」页可离线浏览。</p>' +
       '<h3 style="margin-top:10px">数据来源与通道终态（如实记录，FAILED ≠ 查过零结果）</h3>' +
-      '<ul><li>clinicaltrials_v2（MCP）：M4 实测后登记终态，见 research/pemphigus/fetch-log。</li>' +
-      '<li>其余通道：以 M4 fetch 日志为准；FAILED 如实记「未查过」，不写零结果。</li></ul>' +
+      '<ul><li>chinadrugtrials / ctv / ictrp：SUCCESS（2026-11-11 实抓 223 条，见临床页检索）。</li>' +
+      '<li>chictr_online：<b>FAILED（未查过）</b>；chictr 离线语料 NEEDS_SETUP（仅胰腺癌覆盖，本台无覆盖）；xyb_chinadrugtrials_archive：NO_RESULTS。</li></ul>' +
       '<p class="small-note">登记状态一律「未核实」；快照会过期，请以官方登记页为准。</p>' +
       '<div class="actions" style="margin-top:8px"><button class="soft" data-action="go" data-page="clinical">去临床页浏览 →</button></div></section>'
   }

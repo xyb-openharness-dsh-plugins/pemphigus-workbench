@@ -37,7 +37,8 @@ export const INJECT = ['desktopWorkbenches', 'sessions']
 /* 等待 iframe 首次 load 的宽限：宿主刚重启时插件可能还没就绪，过早报错会吓人 */
 const LOAD_GRACE_MS = 8000
 
-/* 宿主缺 ensureSession 时按钮禁用，同时把原因写到顶栏：不能点了没反应，也不能只留灰按钮 */
+/* 宿主缺 newSession 能力时按钮禁用，同时把原因写到顶栏：不能点了没反应，也不能只留灰按钮。
+   （旧版这里写的是 ensureSession——那条路径已废弃，创建会话统一走 newSession(workspaceId)。） */
 const NO_SESSION_CAPABILITY_NOTE = '当前 Desktop 版本不支持从面板调起会话；请从左侧会话列表新建会话'
 
 /* 会话面板参数：由 scripts/build-client.mjs 从 lib/layout.js 的 AGENT_PANE 注入 */
